@@ -53,7 +53,14 @@ struct NodoArbol* insertar(struct NodoArbol* raiz, int datosEnviadosPorElUsuario
     return raiz;
 }
 
-
+void imprimirlos(struct NodoArbol* raiz) {
+    if (raiz != NULL)
+    {
+        imprimirlos(raiz->izquierda);
+        std::cout << " <--" << raiz->dato << " --> ";
+        imprimirlos(raiz->derecha);
+    }
+}
 
 int main()
 {
@@ -75,7 +82,10 @@ int main()
 
 
     std::cout << "Los elementos del arbol son???";
+    imprimirlos(raiz);
+    //????
 }
+
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu
 // Debug program: F5 or Debug > Start Debugging menu
