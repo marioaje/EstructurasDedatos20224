@@ -62,11 +62,193 @@ void imprimirlos(struct NodoArbol* raiz) {
     }
 }
 
+
+//Arbol Balanceado ejemplo*******************************************************
+
+//Estructura del Nodo base
+struct Nodo {
+    int dato;
+    Nodo* izquierda;
+    Nodo* derecha;
+
+    int altura;
+};
+
+int obtenerAltura(Nodo* elNodo){
+    if (elNodo == nullptr)//si viene el puntero vacio
+    {
+        return 0;//regresa la altura, si no tiene nada devuelve 0
+    }
+
+    return elNodo->altura;
+}
+
+int obtenerMaximo(int a, int b) {
+    //(a > b) ? a : b =>
+  /*  if (a > b) {
+        return a;
+    }
+    else {
+        return b;
+    }*/
+    return (a > b) ? a : b;
+}
+
+//Esta funcion permite crear un nodo, enviandole un dato
+//e incrementando 1 en su altura.
+Nodo* crearElNodo(int datosEnviadorUsuario) {
+    Nodo* nodoNuevo = new Nodo();
+    nodoNuevo->dato = datosEnviadorUsuario;
+    nodoNuevo->izquierda = nullptr;
+    nodoNuevo->derecha = nullptr;
+    nodoNuevo->altura = 1; //cada vez uno nuevo la altura seria 1
+    return nodoNuevo;
+}
+
+
+//Las operaciones
+Nodo* rotarDerecha(Nodo* nodoBase) {
+    Nodo* temp = nodoBase->izquierda;
+    Nodo* temp2 = nodoBase->derecha;
+
+
+    //Girar los datos, procesar los datos, o rotar datos
+    temp->derecha = nodoBase;
+    nodoBase->izquierda = temp2;
+
+
+    //Modificar la base, (la altura)
+    nodoBase->altura = obtenerMaximo(obtenerAltura(nodoBase->izquierda), obtenerAltura(nodoBase->derecha)) + 1;
+    temp->altura = obtenerMaximo(obtenerAltura(temp->izquierda), obtenerAltura(temp->derecha)) + 1;
+
+    return temp;
+}
+
+//Rotacion a la izquierda
+Nodo* rotarIzquiera(Nodo* nodoBase) {
+    Nodo* temp = nodoBase->derecha;
+    Nodo* temp2 = nodoBase->izquierda;
+
+
+    //Girar los datos, procesar los datos, o rotar datos
+    temp->izquierda = nodoBase;
+    nodoBase->derecha = temp2;
+
+
+    //Modificar la base, (la altura)
+    nodoBase->altura = obtenerMaximo(obtenerAltura(nodoBase->izquierda), obtenerAltura(nodoBase->derecha)) + 1;
+    temp->altura = obtenerMaximo(obtenerAltura(temp->izquierda), obtenerAltura(temp->derecha)) + 1;
+
+    return temp;
+}
+
+int obtenerBalance(Nodo* elNodo) {
+    if (elNodo == nullptr) {
+        return 0;
+    }
+    
+    return obtenerAltura(elNodo->izquierda) - obtenerAltura(elNodo->derecha);
+
+ }
+
+Nodo* insertarDatosNodo(Nodo* elNodoEnviado, int datoEnviado) {
+
+    //Analiza si el puntero viene vacio, y lo crea, con el dato enviado
+    if (elNodoEnviado == nullptr) {
+        return crearElNodo(datoEnviado);
+    }
+
+    //7 < 10
+    if (datoEnviado < elNodoEnviado->dato) {
+        elNodoEnviado->izquierda = insertarDatosNodo(elNodoEnviado->izquierda, datoEnviado);
+    }
+    //10 > 8
+    else if (datoEnviado > elNodoEnviado->dato) {
+        elNodoEnviado->derecha = insertarDatosNodo(elNodoEnviado->derecha, datoEnviado);
+    }
+    //8 8
+    else {
+        return elNodoEnviado;
+    }
+
+    //A la altura le suma 1 obteniendo el valor maximo de izq y der
+    elNodoEnviado->altura = 1 + obtenerMaximo(obtenerAltura(elNodoEnviado->izquierda), obtenerAltura(elNodoEnviado->izquierda));
+
+    int balance = obtenerBalance(elNodoEnviado); //Puede ser mayor a 1 o menor a -1
+    //8 > 90
+    //Rotamos hacia la derecha
+    if (balance > 1 && datoEnviado < elNodoEnviado->izquierda->dato) {
+        return rotarDerecha(elNodoEnviado);
+    }
+
+    if (balance > 1 && datoEnviado > elNodoEnviado->izquierda->dato) {
+        elNodoEnviado->izquierda = rotarIzquiera(elNodoEnviado->izquierda);
+        return rotarDerecha(elNodoEnviado);
+    }
+
+
+    //Rotamos hacia la izquierda
+    if (balance < -1 && datoEnviado > elNodoEnviado->derecha->dato) {
+        return rotarIzquiera(elNodoEnviado);
+    }
+
+    if (balance < -1 && datoEnviado < elNodoEnviado->derecha->dato) {
+        elNodoEnviado->derecha = rotarDerecha(elNodoEnviado->derecha);
+        return rotarIzquiera(elNodoEnviado);
+    }
+
+    return elNodoEnviado;
+}
+
+
+void recorridoEnOrden(Nodo* elNodoEnviado) {
+    if (elNodoEnviado != nullptr)
+    {
+        recorridoEnOrden(elNodoEnviado->izquierda);
+        std::cout << elNodoEnviado->dato << " ";
+        recorridoEnOrden(elNodoEnviado->derecha);
+    }
+}
+
+
 int main()
 {
     std::cout << "Hello ArbolBinario!\n";
 
-    struct NodoArbol* raiz = NULL;
+    //Esto es paa ABB
+
+    Nodo* raizABB = nullptr;
+
+    raizABB = insertarDatosNodo(raizABB, 112);
+    raizABB = insertarDatosNodo(raizABB, 22);
+    raizABB = insertarDatosNodo(raizABB, 132);
+    raizABB = insertarDatosNodo(raizABB, 5);
+    raizABB = insertarDatosNodo(raizABB, 22);
+    raizABB = insertarDatosNodo(raizABB, 4);
+    raizABB = insertarDatosNodo(raizABB, 12);
+    raizABB = insertarDatosNodo(raizABB, 15);
+    raizABB = insertarDatosNodo(raizABB, 18);
+  raizABB = insertarDatosNodo(raizABB, 112);
+    raizABB = insertarDatosNodo(raizABB, 22);
+    raizABB = insertarDatosNodo(raizABB, 132);
+    raizABB = insertarDatosNodo(raizABB, 312);
+  /*  raizABB = insertarDatosNodo(raizABB, 312);
+    raizABB = insertarDatosNodo(raizABB, 2);
+    raizABB = insertarDatosNodo(raizABB, 7);
+    raizABB = insertarDatosNodo(raizABB, 12);
+    raizABB = insertarDatosNodo(raizABB, 1);
+    raizABB = insertarDatosNodo(raizABB, 8);
+    raizABB = insertarDatosNodo(raizABB, 11);
+    raizABB = insertarDatosNodo(raizABB, 21);
+    raizABB = insertarDatosNodo(raizABB, 3);*/
+
+    std::cout << "Los elementos del ABB son???";
+    recorridoEnOrden(raizABB);
+
+    
+
+    //Esto es para binario
+  /*  struct NodoArbol* raiz = NULL;
     raiz = insertar(raiz, 12);
     raiz = insertar(raiz, 15);
     raiz = insertar(raiz, 18);
@@ -82,7 +264,7 @@ int main()
 
 
     std::cout << "Los elementos del arbol son???";
-    imprimirlos(raiz);
+    imprimirlos(raiz);*/
     //????
 }
 
